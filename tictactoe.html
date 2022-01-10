@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>틱택토</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        td{
+            border: 1px solid black;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+  <!--  <table>
+        <tr> 
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table> -->
+    
+    <script>
+        const { body } = document; // 구조 분해 할당 distructuring
+                                    // 구조 분해 할당이 안 돌아가는 경우도 존재
+        
+        const $table = document.createElement('table');
+        const $result = document.createElement('div');
+        const rows = [];
+        let turn ='O';
+
+        /* arr = [
+            [td, td, td],
+            [td, td, td],
+            [td, td, td],
+        ]
+        arr[0][1].textContent;
+        */
+
+        for (let i = 0; i<3; i++) {
+            const $tr = document.createElement('tr');
+            const cells = [];
+            for (let j = 0; j<3; j++) { // 변수 이름은 항상 다르게!
+                const $td = document.createElement('td');
+                cells.push($td);
+                $td.addEventListener('click', (event) => {
+                    // 칸에 글자가 있나?
+                    if (event.target.textContent) return;
+                    event.target.textContent = turn;
+                    // 승부 확인
+                    if (turn === 'O') {
+                        turn = 'X';
+                    } else if (turn === 'X') {
+                        turn = 'O';
+                    }
+                });
+                $tr.append($td);
+                
+            }
+            rows.push(cells); 
+            $table.append($tr);
+        }
+        body.append($table);
+        body.append($result);
+
+        //const arr = [1, 2, 3, 4, 5];
+        //const one = [0];
+        
+        //const three = [2];
+        
+        //const five = [5];
+        //const [one, , three, , five] = arr;
+
+
+    </script>
+</body>
+</html>
