@@ -24,7 +24,7 @@
       // 구조 분해 할당이 안 돌아가는 경우도 존재
 
       const $table = document.createElement("table");
-      const $result = document.createElement("div");
+      const $result = document.createElement("div"); // 결과 창
       const rows = [];
       let turn = "O";
 
@@ -75,23 +75,14 @@
         return hasWinner;
       };
 
-      const callback = (event) => {
-        if (event.target.textContent !== "") {
-          // 칸이 이미 채워져 있는가?
-          console.log("빈칸이 아닙니다.");
-          return;
-        }
-        // 빈칸이면
-        console.log("빈칸입니다.");
-        event.target.textContent = turn;
-        // 승부 판단하기
-        const hasWinner = checkWinner(event.target);
+      const checkWinnerAndDraw = (target) => {
+        const hasWinner = checkWinner(target);
+        // 승자가 있으면
         if (hasWinner) {
           $result.textContent = `${turn}님이 승리!`;
-          $table.removeEventListener("click", callback); // 이벤트 버블링의 효과
           return;
         }
-        //  무승부 검사
+        // 승자가 없으면(무승부)
         const draw = rows.flat().every((cell) => cell.textContent);
         if (draw) {
           $result.textContent = `무승부`;
@@ -102,8 +93,35 @@
           turn = "X";
         } else if (turn === "X") {
           turn = "O";
+          // turn = turn === 'X' ? 'O' : 'X';
         }
-        // turn = (turn === 'O' ? 'X' : 'O');   코드 줄이기
+      };
+
+      let clickable = true;
+      const callback = (event) => {
+        if (!clickable) {
+          return;
+        }
+        if (event.target.textContent !== "") {
+          // 칸이 이미 채워져 있는가?
+          console.log("빈칸이 아닙니다.");
+          return;
+        }
+        // 빈칸이면
+        console.log("빈칸입니다.");
+        event.target.textContent = turn;
+        checkWinnerAndDraw(event.target);
+        if (turn === "X") {
+          const emptyCells = rows.flat().filter((v) => !v.textContent); // 빈 칸 찾기
+          const randomCell =
+            emptyCells[Math.floor(Math.random() * emptyCells.length)]; // 랜덤 함수
+          clickable = false;
+          setTimeout(() => {
+            randomCell.textContent = "X";
+            checkWinnerAndDraw(randomCell);
+            clickable = true;
+          }, 1000);
+        }
       };
 
       for (let i = 0; i < 3; i++) {
@@ -113,15 +131,14 @@
           // 변수 이름은 항상 다르게!
           const $td = document.createElement("td");
           cells.push($td);
-          $td.addEventListener("click", callback);
-          $tr.append($td);
+          $tr.appendChild($td);
         }
         rows.push(cells);
-        $table.append($tr);
+        $table.appendChild($tr);
+        $table.addEventListener("click", callback);
       }
-      $table.addEventListener("click", callback);
-      body.append($table);
-      body.append($result);
+      body.appendChild($table);
+      body.appendChild($result);
     </script>
   </body>
 </html>
